@@ -64,6 +64,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hylo.stylespace.R
@@ -91,6 +92,14 @@ fun HomeScreen(
     val services by servicesViewModel.services.collectAsState()
     val typeServices by servicesViewModel.typeServices.collectAsState()
     val nextAppointment by appointmentViewModel.nextAppointment.collectAsState()
+
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+    val servicesMap = remember(services) { services.associateBy { it.id } }
+    val servicesUse = servicesMap[nextAppointment?.servicesId]
+
+    val listState = rememberLazyListState()
+    val fling = rememberSnapFlingBehavior(listState)
 
     LazyColumn(
         modifier = Modifier
@@ -154,8 +163,6 @@ fun HomeScreen(
                             enter = fadeIn() + expandVertically(),
                             exit = fadeOut() + shrinkVertically()
                         ) {
-                            val servicesUse = services.find { it.id == nextAppointment?.servicesId }
-
                             Column (
                                 verticalArrangement = Arrangement.spacedBy(
                                     space = 8.dp
@@ -317,9 +324,7 @@ fun HomeScreen(
                         LazyRow(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            flingBehavior = rememberSnapFlingBehavior(
-                                lazyListState = rememberLazyListState()
-                            )
+                            flingBehavior = fling
                         ) {
                             itemsIndexed(
                                 items = typeServices,
@@ -356,6 +361,7 @@ fun HomeScreen(
                                         mainScreenNavController = mainScreenNavController,
                                         item = item,
                                         changeServicesSelected = changeServicesSelected,
+                                        itemSize = screenWidth / 3,
                                         modifier = Modifier
                                             .graphicsLayer {
                                                 alpha = animatedProgress.value
@@ -377,11 +383,9 @@ private fun CardServices(
     mainScreenNavController: NavController,
     item: TypeServices,
     changeServicesSelected: (TypeServices) -> Unit,
+    itemSize: Dp,
     modifier: Modifier
 ) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val itemSize = screenWidth / 3
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),

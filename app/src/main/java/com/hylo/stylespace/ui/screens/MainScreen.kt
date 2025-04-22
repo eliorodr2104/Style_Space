@@ -49,7 +49,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import com.hylo.stylespace.R
 import com.hylo.stylespace.model.NavigationItem
-import com.hylo.stylespace.model.Services
 import com.hylo.stylespace.model.TypeServices
 import com.hylo.stylespace.model.UserRole
 import com.hylo.stylespace.model.enums.Screen
@@ -108,19 +107,19 @@ fun MainScreen(
 
     val user by userViewModel.user.collectAsState()
 
-    LaunchedEffect(Unit) {
-        user?.establishmentUsed?.let { servicesViewModel.loadServices(it.first()) }
-        user?.establishmentUsed?.let { servicesViewModel.loadTypeServices(it.first()) }
+    LaunchedEffect(user?.establishmentUsed) {
 
         user?.let {
-            user?.establishmentUsed?.let { it1 ->
-                appointmentViewModel.loadNextAppointment(
-                    establishmentId = it1.first(),
-                    userId = it.id,
-                )
+            user?.establishmentUsed?.firstOrNull()?.let { id ->
+                servicesViewModel.loadServices(id)
+
+                servicesViewModel.loadTypeServices(id)
+
+                appointmentViewModel.loadNextAppointment(id, it.id)
             }
         }
     }
+
 
     Scaffold(
         topBar = {

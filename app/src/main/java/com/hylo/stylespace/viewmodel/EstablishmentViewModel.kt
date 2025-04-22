@@ -5,12 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hylo.stylespace.model.Establishment
-import com.hylo.stylespace.repository.FirebaseRepository
 import kotlinx.coroutines.launch
 
-class EstablishmentViewModel constructor(
-    private val repository: FirebaseRepository
-) : ViewModel() {
+class EstablishmentViewModel : ViewModel() {
 
     private val _establishment = MutableLiveData<List<Establishment>>()
     val establishment: LiveData<List<Establishment>> = _establishment
@@ -20,8 +17,6 @@ class EstablishmentViewModel constructor(
 
     fun loadEstablishmentForUser(userId: String) {
         viewModelScope.launch {
-            val establishmentUser = repository.getEstablishmentForUser(userId)
-            _establishment.value = establishmentUser
 
         }
     }
@@ -32,7 +27,7 @@ class EstablishmentViewModel constructor(
 
     fun createEstablishment(establishment: Establishment) {
         viewModelScope.launch {
-            _establishmentUse.value = repository.createEstablishment(establishment)
+
         }
     }
 }
