@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Style Space</string>
+    <string name="web_client_id">710459085776-ha731ii7gbn62ijd8endo3bsj5eq6l8k.apps.googleusercontent.com</string>
+
+    <!--Strings Login screen-->
+
+        <!--Top text screen-->
+            <string name="welcome_app">Benvenuto!</string>
+            <string name="text_welcome_app">Accedi per gestire i tuoi appuntamenti</string>
+
+        <!--Button login google-->
+            <string name="login_process_text">Accesso in corso…</string>
+            <string name="login_google">Accedi con Google</string>
+
+        <!--Bottom text screen-->
+            <string name="policy_text">Continuando, accetti i nostri Termini di Servizio e Privacy Policy.</string>
+
+    <!--Strings Register screen-->
+
+        <!--Top text screen-->
+            <string name="welcome_register">Completa il tuo profilo</string>
+            <string name="text_welcome_register">Abbiamo bisogno di queste informazioni per prenotare i tuoi appuntamenti.</string>
+
+        <!--Strings TextField register-->
+            <string name="name_textfield">Nome</string>
+            <string name="text_name_textfield">Inserisci il tuo nome</string>
+            <string name="lastname_textfield">Cognome</string>
+            <string name="text_lastname_textfield">Inserisci il tuo cognome</string>
+            <string name="phone_textfield">Telefono</string>
+            <string name="text_phone_textfield">+39 123 456 7890</string>
+
+        <!--Botton buttom register-->
+            <string name="button_complete_registration">Completa la registrazione</string>
+
+    <!--Strings Main-Menu screen-->
+        <string name="title_home">Home</string>
+        <string name="hello_home">Benvenuto nel tuo centro di bellezza</string>
+        <string name="next_appointment">Il tuo prossimo appuntamento:</string>
+
+        <string name="service_header">Servizi</string>
+
+        <string name="welcome_home">Ciao,</string>
+        <string name="title_appointment">I tuoi appuntamenti</string>
+        <string name="title_profile">Il tuo profilo</string>
+        <string name="title_settings">Impostazioni</string>
+</resources>

@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Style Space</string>
+    <string name="web_client_id">710459085776-ha731ii7gbn62ijd8endo3bsj5eq6l8k.apps.googleusercontent.com</string>
+
+    <string name="welcome_app">Welcome!</string>
+    <string name="text_welcome_app">Sign in to manage your appointments</string>
+
+    <string name="login_process_text">Login in process</string>
+    <string name="login_google">Login Google</string>
+
+    <string name="policy_text">By continuing, you agree to our Terms of Service and Privacy Policy.</string>
+
+    <!--Strings Register screen-->
+
+        <!--Top text screen-->
+            <string name="welcome_register">Complete your profile</string>
+            <string name="text_welcome_register">We need this information to book your appointments.</string>
+
+        <!--Strings TextField register-->
+            <string name="name_textfield">Nome</string>
+            <string name="text_name_textfield">Enter your name</string>
+            <string name="lastname_textfield">Lastname</string>
+            <string name="text_lastname_textfield">Enter your lastname</string>
+            <string name="phone_textfield">Phone</string>
+            <string name="text_phone_textfield">+39 123 456 7890</string>
+
+        <!--Bottom button register-->
+            <string name="button_complete_registration">Complete the registration</string>
+
+    <string name="title_home">Home </string>
+    <string name="hello_home">Welcome to your beauty salon</string>
+    <string name="next_appointment">Your next appointment:</string>
+
+    <string name="service_header">Services</string>
+
+    <string name="welcome_home">Hello, </string>
+    <string name="title_appointment">Your appointments</string>
+    <string name="title_profile">Your profile</string>
+    <string name="title_settings">Settings</string>
+</resources>
