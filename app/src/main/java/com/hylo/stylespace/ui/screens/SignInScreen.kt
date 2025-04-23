@@ -48,7 +48,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hylo.stylespace.GoogleAuth.GoogleAuthUiClient
+import com.hylo.stylespace.googleAuth.GoogleAuthUiClient
 import com.hylo.stylespace.R
 import com.hylo.stylespace.model.Establishment
 import com.hylo.stylespace.model.SignIn.SignInState

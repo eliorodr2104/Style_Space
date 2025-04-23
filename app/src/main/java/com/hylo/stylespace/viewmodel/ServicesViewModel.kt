@@ -6,10 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hylo.stylespace.model.Services
 import com.hylo.stylespace.model.TypeServices
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class ServicesViewModel() : ViewModel() {
 
@@ -29,10 +31,11 @@ class ServicesViewModel() : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
-    fun loadTypeServices(
+    suspend fun loadTypeServices(
         establishmentId: String
     ) {
-        viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+
             try {
                 val db = getDatabaseReference()
 

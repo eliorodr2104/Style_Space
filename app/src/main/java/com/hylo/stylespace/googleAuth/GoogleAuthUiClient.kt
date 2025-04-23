@@ -1,4 +1,4 @@
-package com.hylo.stylespace.GoogleAuth
+package com.hylo.stylespace.googleAuth
 
 import android.content.Context
 import android.content.Intent
