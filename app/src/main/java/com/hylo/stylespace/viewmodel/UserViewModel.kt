@@ -6,10 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hylo.stylespace.model.Establishment
 import com.hylo.stylespace.model.User
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 
 class UserViewModel() : ViewModel() {
@@ -24,8 +26,8 @@ class UserViewModel() : ViewModel() {
     private val _isUserLoaded = MutableStateFlow(false)
     val isUserLoaded: StateFlow<Boolean> = _isUserLoaded
 
-    fun loadUser(user: User) {
-        viewModelScope.launch {
+    suspend fun loadUser(user: User) {
+        withContext(Dispatchers.IO) {
             try {
 
                 withTimeoutOrNull(3000L) {
@@ -60,8 +62,8 @@ class UserViewModel() : ViewModel() {
         }
     }
 
-    fun loginUser(user: User, establishment: Establishment) {
-        viewModelScope.launch {
+    suspend fun loginUser(user: User, establishment: Establishment) {
+        withContext(Dispatchers.IO) {
             try {
                 val db = getDatabaseReference()
 

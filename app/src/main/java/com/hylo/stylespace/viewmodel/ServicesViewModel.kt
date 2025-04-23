@@ -2,6 +2,7 @@ package com.hylo.stylespace.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hylo.stylespace.model.Services
@@ -13,7 +14,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class ServicesViewModel() : ViewModel() {
+class ServicesViewModel(
+    private val establishmentId: String
+
+) : ViewModel() {
 
     private fun getDatabaseReference(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
@@ -31,9 +35,15 @@ class ServicesViewModel() : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
-    suspend fun loadTypeServices(
-        establishmentId: String
-    ) {
+    init {
+        viewModelScope.launch {
+            loadServices()
+            loadTypeServices()
+
+        }
+    }
+
+    suspend fun loadTypeServices() {
         withContext(Dispatchers.IO) {
 
             try {
@@ -72,10 +82,8 @@ class ServicesViewModel() : ViewModel() {
         }
     }
 
-    fun loadServices(
-        establishmentId: String
-    ) {
-        viewModelScope.launch {
+    suspend fun loadServices() {
+        withContext(Dispatchers.IO) {
             try {
                 val db = getDatabaseReference()
 
@@ -122,14 +130,13 @@ class ServicesViewModel() : ViewModel() {
         }
     }
 
-    fun createService(
-        establishmentId: String,
+    suspend fun createService(
         newService: Services
     ) {
         _isCreatingService.value = true
         _errorMessage.value = null
 
-        viewModelScope.launch {
+        withContext(Dispatchers.IO) {
             try {
                 val db = getDatabaseReference()
 

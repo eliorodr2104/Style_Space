@@ -36,12 +36,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -54,19 +56,19 @@ import com.hylo.stylespace.model.UserRole
 import com.hylo.stylespace.model.enums.Screen
 import com.hylo.stylespace.viewmodel.AppointmentViewModel
 import com.hylo.stylespace.viewmodel.ServicesViewModel
+import com.hylo.stylespace.viewmodel.factory.ServicesViewModelFactory
 import com.hylo.stylespace.viewmodel.UserViewModel
+import com.hylo.stylespace.viewmodel.factory.AppointmentViewModelFactory
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     userViewModel: UserViewModel,
-    servicesViewModel: ServicesViewModel,
-    appointmentViewModel: AppointmentViewModel,
     onSignOut: () -> Unit
 ) {
 
-    var selectedNavigationIndex by remember {
+    var selectedNavigationIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
@@ -78,48 +80,49 @@ fun MainScreen(
         mutableStateOf<TypeServices?>(null)
     }
 
-    val navigationItems = listOf(
-        NavigationItem(
-            title = "Home",
-            icon = Icons.Outlined.Home,
-            selectedIcon = Icons.Filled.Home,
-            route = Screen.Home.route
-        ),
-        NavigationItem(
-            title = "Date",
-            icon = Icons.Outlined.DateRange,
-            selectedIcon = Icons.Filled.DateRange,
-            route = Screen.Appointment.route
-        ),
-        NavigationItem(
-            title = "Profile",
-            icon = Icons.Outlined.Person,
-            selectedIcon = Icons.Filled.Person,
-            route = Screen.Profile.route
-        ),
-        NavigationItem(
-            title = "Settings",
-            icon = Icons.Outlined.Settings,
-            selectedIcon = Icons.Filled.Settings,
-            route = Screen.Setting.route
+    val user by userViewModel.user.collectAsState()
+
+    val appointmentViewModel: AppointmentViewModel = viewModel(
+        factory = AppointmentViewModelFactory(
+            establishmentId = user?.establishmentUsed?.firstOrNull().toString(),
+            userId = user?.id ?: ""
         )
     )
 
-    val user by userViewModel.user.collectAsState()
+    val servicesViewModel: ServicesViewModel = viewModel(
+        factory = ServicesViewModelFactory(user?.establishmentUsed?.firstOrNull().toString())
+    )
 
-    LaunchedEffect(user?.establishmentUsed) {
-
-        user?.let {
-            user?.establishmentUsed?.firstOrNull()?.let { id ->
-                servicesViewModel.loadServices(id)
-
-                servicesViewModel.loadTypeServices(id)
-
-                appointmentViewModel.loadNextAppointment(id, it.id)
-            }
-        }
+    val navigationItems by remember {
+        mutableStateOf(
+            listOf(
+                NavigationItem(
+                    title = "Home",
+                    icon = Icons.Outlined.Home,
+                    selectedIcon = Icons.Filled.Home,
+                    route = Screen.Home.route
+                ),
+                NavigationItem(
+                    title = "Date",
+                    icon = Icons.Outlined.DateRange,
+                    selectedIcon = Icons.Filled.DateRange,
+                    route = Screen.Appointment.route
+                ),
+                NavigationItem(
+                    title = "Profile",
+                    icon = Icons.Outlined.Person,
+                    selectedIcon = Icons.Filled.Person,
+                    route = Screen.Profile.route
+                ),
+                NavigationItem(
+                    title = "Settings",
+                    icon = Icons.Outlined.Settings,
+                    selectedIcon = Icons.Filled.Settings,
+                    route = Screen.Setting.route
+                )
+            )
+        )
     }
-
 
     Scaffold(
         topBar = {

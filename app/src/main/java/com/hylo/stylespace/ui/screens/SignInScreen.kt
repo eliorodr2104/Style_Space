@@ -33,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +55,8 @@ import com.hylo.stylespace.model.Establishment
 import com.hylo.stylespace.model.SignIn.SignInState
 import com.hylo.stylespace.model.User
 import com.hylo.stylespace.viewmodel.UserViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(
@@ -73,6 +76,8 @@ fun SignInScreen(
 
     val isUserLoaded by userViewModel.isUserLoaded.collectAsState()
     val userUsage by userViewModel.user.collectAsState()
+
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = state.signInError) {
         state.signInError?.let { error ->
@@ -122,7 +127,8 @@ fun SignInScreen(
                     signInStatus = isSignInProcess,
                     changeSignInStatus = {
                         isSignInProcess = it
-                    }
+                    },
+                    scope = scope
                 )
             }
 
@@ -134,7 +140,8 @@ fun SignInScreen(
                     userViewModel = userViewModel,
                     establishmentLocalInformation = establishmentLocalInformation,
                     innerPadding = innerPadding,
-                    user = googleAuthUiClient.getSignedInUser()
+                    user = googleAuthUiClient.getSignedInUser(),
+                    scope = scope
                 )
 
             }
@@ -147,13 +154,13 @@ fun SignInScreen(
 private fun FormRegister(
     userViewModel: UserViewModel,
     establishmentLocalInformation: Establishment,
+    scope: CoroutineScope,
     innerPadding: PaddingValues,
     user: User?
 ) {
     var nameText by remember { mutableStateOf(user?.name ?: "") }
     var lastNameText by remember { mutableStateOf("") }
     var phoneText by remember { mutableStateOf(user?.phone ?: "") }
-
 
     Column(
         modifier = Modifier
@@ -248,20 +255,22 @@ private fun FormRegister(
 
             Button(
                 onClick = {
-                    userViewModel.loginUser(
-                        user = User(
-                            id = user?.id ?: "",
-                            name = nameText,
-                            email = user?.email ?: "",
-                            phone = phoneText,
-                            type = "client",
-                            establishmentUsed = listOf(
-                                establishmentLocalInformation.id
-                            )
-                        ),
+                    scope.launch {
+                        userViewModel.loginUser(
+                            user = User(
+                                id = user?.id ?: "",
+                                name = nameText,
+                                email = user?.email ?: "",
+                                phone = phoneText,
+                                type = "client",
+                                establishmentUsed = listOf(
+                                    establishmentLocalInformation.id
+                                )
+                            ),
 
-                        establishment = establishmentLocalInformation
-                    )
+                            establishment = establishmentLocalInformation
+                        )
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -329,7 +338,8 @@ private fun GoogleFirstLogin(
     googleAuthUiClient: GoogleAuthUiClient,
     onSignInClick: () -> Unit,
     signInStatus: Boolean,
-    changeSignInStatus: (Boolean) -> Unit
+    changeSignInStatus: (Boolean) -> Unit,
+    scope: CoroutineScope
 ) {
 
     Box(
@@ -387,7 +397,11 @@ private fun GoogleFirstLogin(
 
                         changeSignInStatus(true)
 
-                        googleAuthUiClient.getSignedInUser()?.let { userViewModel.loadUser(it) }
+                        googleAuthUiClient.getSignedInUser()?.let {
+                           scope.launch {
+                               userViewModel.loadUser(it)
+                           }
+                        }
 
 
                     },

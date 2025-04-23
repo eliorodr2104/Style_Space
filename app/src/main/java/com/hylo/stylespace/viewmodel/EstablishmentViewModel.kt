@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hylo.stylespace.model.Establishment
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class EstablishmentViewModel : ViewModel() {
 
@@ -15,8 +17,8 @@ class EstablishmentViewModel : ViewModel() {
     private val _establishmentUse = MutableLiveData<Establishment?>()
     val establishmentUse: LiveData<Establishment?> = _establishmentUse
 
-    fun loadEstablishmentForUser(userId: String) {
-        viewModelScope.launch {
+    suspend fun loadEstablishmentForUser(userId: String) {
+        withContext(Dispatchers.IO) {
 
         }
     }
@@ -25,8 +27,8 @@ class EstablishmentViewModel : ViewModel() {
         _establishmentUse.value = establishment
     }
 
-    fun createEstablishment(establishment: Establishment) {
-        viewModelScope.launch {
+    suspend fun createEstablishment(establishment: Establishment) {
+        withContext(Dispatchers.IO) {
 
         }
     }

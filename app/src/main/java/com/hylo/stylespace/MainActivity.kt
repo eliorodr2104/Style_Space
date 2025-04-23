@@ -26,8 +26,6 @@ import com.hylo.stylespace.model.Establishment
 import com.hylo.stylespace.ui.screens.MainScreen
 import com.hylo.stylespace.ui.screens.SignInScreen
 import com.hylo.stylespace.ui.theme.StyleSpaceTheme
-import com.hylo.stylespace.viewmodel.AppointmentViewModel
-import com.hylo.stylespace.viewmodel.ServicesViewModel
 import com.hylo.stylespace.viewmodel.SignInViewModel
 import com.hylo.stylespace.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
@@ -65,9 +63,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     val navController = rememberNavController()
-
-                    val servicesViewModel = viewModel<ServicesViewModel>()
-                    val appointmentViewModel = viewModel<AppointmentViewModel>()
 
                     NavHost(navController = navController, startDestination = "splash") {
                         composable("splash") {
@@ -138,8 +133,6 @@ class MainActivity : ComponentActivity() {
 
                             MainScreen(
                                 userViewModel = userViewModel,
-                                servicesViewModel = servicesViewModel,
-                                appointmentViewModel = appointmentViewModel,
                                 onSignOut = {
                                     lifecycleScope.launch {
                                         googleAuthUiClient.signOut()

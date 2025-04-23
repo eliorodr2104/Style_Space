@@ -2,19 +2,27 @@ package com.hylo.stylespace.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.hylo.stylespace.model.Appointment
 import com.hylo.stylespace.model.enums.StateAppointment
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
-class AppointmentViewModel() : ViewModel() {
+private const val TIME_WINDOW_HOUR = 96
+
+class AppointmentViewModel(
+    private val establishmentId: String,
+    private val userId: String
+) : ViewModel() {
 
     private fun getDatabaseReference(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
@@ -29,11 +37,14 @@ class AppointmentViewModel() : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun loadAppointment(
-        establishmentId: String,
-        userId: String? = null
-    ) {
+    init {
         viewModelScope.launch {
+            loadNextAppointment()
+        }
+    }
+
+    suspend fun loadAppointment() {
+        withContext(Dispatchers.IO) {
             try {
                 val db = getDatabaseReference()
 
@@ -86,11 +97,11 @@ class AppointmentViewModel() : ViewModel() {
         }
     }
 
-    fun createAppointment(
+    suspend fun createAppointment(
         newAppointment: Appointment,
         establishmentId: String
     ) {
-        viewModelScope.launch {
+        withContext(Dispatchers.IO) {
             try {
                 val db = getDatabaseReference()
 
@@ -112,14 +123,10 @@ class AppointmentViewModel() : ViewModel() {
         }
     }
 
-    fun loadNextAppointment(
-        establishmentId: String,
-        userId: String,
-        timeWindowHours: Int = 48
-    ) {
+    suspend fun loadNextAppointment() {
         _isLoading.value = true
 
-        viewModelScope.launch {
+        withContext(Dispatchers.IO) {
             try {
                 val db = getDatabaseReference()
                 val now = Timestamp.now()
@@ -127,7 +134,7 @@ class AppointmentViewModel() : ViewModel() {
                 val calendar = Calendar.getInstance()
                 calendar.time = now.toDate()
 
-                calendar.add(Calendar.HOUR, timeWindowHours)
+                calendar.add(Calendar.HOUR, TIME_WINDOW_HOUR)
                 val endTimeWindow = Timestamp(calendar.time)
 
                 val nextAppointmentQuery = db.collection("establishments")
