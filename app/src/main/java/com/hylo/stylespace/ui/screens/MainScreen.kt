@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -56,9 +55,9 @@ import com.hylo.stylespace.model.UserRole
 import com.hylo.stylespace.model.enums.Screen
 import com.hylo.stylespace.viewmodel.AppointmentViewModel
 import com.hylo.stylespace.viewmodel.ServicesViewModel
-import com.hylo.stylespace.viewmodel.factory.ServicesViewModelFactory
 import com.hylo.stylespace.viewmodel.UserViewModel
 import com.hylo.stylespace.viewmodel.factory.AppointmentViewModelFactory
+import com.hylo.stylespace.viewmodel.factory.ServicesViewModelFactory
 
 
 @OptIn(ExperimentalMaterial3Api::class)

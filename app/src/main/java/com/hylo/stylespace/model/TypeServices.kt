@@ -1,8 +1,11 @@
 package com.hylo.stylespace.model
 
-import java.util.UUID
+import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.IgnoreExtraProperties
 
+@IgnoreExtraProperties
 data class TypeServices(
-    val id: UUID = UUID.randomUUID(),
-    val name: String
+    @DocumentId
+    val id: String = "",
+    val name: String = ""
 )

@@ -2,7 +2,6 @@ package com.hylo.stylespace.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hylo.stylespace.model.Services
@@ -36,10 +35,12 @@ class ServicesViewModel(
     val errorMessage: StateFlow<String?> = _errorMessage
 
     init {
-        viewModelScope.launch {
-            loadServices()
-            loadTypeServices()
+        viewModelScope.launch(Dispatchers.IO) {
 
+            withContext(Dispatchers.IO) {
+                loadServices()
+                loadTypeServices()
+            }
         }
     }
 
@@ -49,28 +50,16 @@ class ServicesViewModel(
             try {
                 val db = getDatabaseReference()
 
-                val typeServicesQuery = db.collection("establishments")
+                val typeServicesQuery = db
+                    .collection("establishments")
                     .document(establishmentId)
                     .collection("typeServices")
 
                 val typeServicesQuerySnapshot = typeServicesQuery.get().await()
 
                 if (!typeServicesQuerySnapshot.isEmpty) {
-                    val typeServicesList = typeServicesQuerySnapshot.documents.mapNotNull { document ->
-                        try {
-                            val name = document.getString("name") ?: ""
+                    _typeServices.value = typeServicesQuerySnapshot.toObjects(TypeServices::class.java)
 
-                            TypeServices(
-                                name = name
-                            )
-
-                        } catch (e: Exception) {
-                            Log.e("ServicesViewModel", "Error converting document to Services object", e)
-                            null
-                        }
-                    }
-
-                    _typeServices.value = typeServicesList
                 } else {
                     _typeServices.value = emptyList()
                 }
@@ -94,31 +83,8 @@ class ServicesViewModel(
                 val servicesQuerySnapshot = servicesQuery.get().await()
 
                 if (!servicesQuerySnapshot.isEmpty) {
-                    val servicesList = servicesQuerySnapshot.documents.mapNotNull { document ->
-                        try {
-                            val id = document.id
-                            val name = document.getString("name") ?: ""
-                            val description = document.getString("description") ?: ""
-                            val durationInMinutes = document.getLong("durationInMinutes")?.toInt() ?: 0
-                            val price = document.getDouble("price") ?: 0.0
-                            val type = document.getString("type") ?: ""
+                    _services.value = servicesQuerySnapshot.toObjects(Services::class.java)
 
-                            Services(
-                                id = id,
-                                name = name,
-                                description = description,
-                                price = price,
-                                durationInMinutes = durationInMinutes,
-                                type = type
-                            )
-
-                        } catch (e: Exception) {
-                            Log.e("ServicesViewModel", "Error converting document to Services object", e)
-                            null
-                        }
-                    }
-
-                    _services.value = servicesList
                 } else {
                     _services.value = emptyList()
                 }
