@@ -1,9 +1,14 @@
 package com.hylo.stylespace.model
 
+import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.IgnoreExtraProperties
+
+@IgnoreExtraProperties
 data class Establishment(
+    @DocumentId
     val id          : String              = "",
     val name        : String              = "",
     val address     : String              = "",
-    val openingHours: Map<String, String> = emptyMap(), // example: "mon" -> "9-18"
-    val closingDates: List<String>        = emptyList() // ISO date "2025-04-01"
+    val openingHours: Map<String, String> = emptyMap(),
+    val closingDates: List<String>        = emptyList()
 )

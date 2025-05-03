@@ -33,13 +33,15 @@ class AppointmentViewModel(
     private val _nextAppointment = MutableStateFlow<Appointment?>(null)
     val nextAppointment: StateFlow<Appointment?> = _nextAppointment
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
     init {
-        viewModelScope.launch {
-            loadNextAppointment()
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            withContext(Dispatchers.IO) {
+                loadNextAppointment()
+            }
         }
+
     }
 
     suspend fun loadAppointment() {
@@ -123,7 +125,6 @@ class AppointmentViewModel(
     }
 
     suspend fun loadNextAppointment() {
-        _isLoading.value = true
 
         withContext(Dispatchers.IO) {
             try {
@@ -136,7 +137,8 @@ class AppointmentViewModel(
                 calendar.add(Calendar.HOUR, TIME_WINDOW_HOUR)
                 val endTimeWindow = Timestamp(calendar.time)
 
-                val nextAppointmentQuery = db.collection("establishments")
+                val nextAppointmentQuery = db
+                    .collection("establishments")
                     .document(establishmentId)
                     .collection("appointment")
                     .whereEqualTo("userId", userId)
@@ -146,13 +148,15 @@ class AppointmentViewModel(
                     .orderBy("dataOra", Query.Direction.ASCENDING)
                     .limit(1)
 
-                val querySnapshot = nextAppointmentQuery.get().await()
+                val querySnapshot = nextAppointmentQuery
+                    .get()
+                    .await()
 
                 if (!querySnapshot.isEmpty) {
-                    val document = querySnapshot.documents.first()
+                    //val document = querySnapshot.documents.first()
 
                     try {
-                        val id = document.getString("id") ?: document.id
+                        /*val id = document.getString("id") ?: document.id
                         val userIdField = document.getString("userId") ?: ""
                         val employeeId = document.getString("employeeId") ?: ""
                         val servicesId = document.getString("servicesId") ?: ""
@@ -170,8 +174,12 @@ class AppointmentViewModel(
                             notes = notes
                         )
 
-                        _nextAppointment.value = appointment
+                        _nextAppointment.value = appointment*/
+
+                        _nextAppointment.value = querySnapshot.documents.first().toObject(Appointment::class.java)
+
                     } catch (e: Exception) {
+
                         Log.e("AppointmentViewModel", "Error converting document to Appointment object", e)
                         _nextAppointment.value = null
                     }
@@ -184,8 +192,6 @@ class AppointmentViewModel(
                 Log.e("AppointmentViewModel", "Error loading next appointment", e)
                 _nextAppointment.value = null
 
-            } finally {
-                _isLoading.value = false
             }
         }
     }

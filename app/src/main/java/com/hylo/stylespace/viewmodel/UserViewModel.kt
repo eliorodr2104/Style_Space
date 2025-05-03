@@ -67,7 +67,8 @@ class UserViewModel() : ViewModel() {
             try {
                 val db = getDatabaseReference()
 
-                val establishmentQuery = db.collection("establishments")
+                val establishmentQuery = db
+                    .collection("establishments")
                     .whereEqualTo("name", establishment.name)
                     .limit(1)
 
@@ -93,7 +94,7 @@ class UserViewModel() : ViewModel() {
                     val document = userQuerySnapshot.documents[0]
                     val existingUser = document.toObject(User::class.java)!!
 
-                    val updatedEstablishments = existingUser.establishmentUsed.toMutableList()
+                    /*val updatedEstablishments = existingUser.establishmentUsed.toMutableList()
 
                     if (!updatedEstablishments.contains(establishmentRef.id)) {
                         updatedEstablishments.add(establishmentRef.id)
@@ -106,10 +107,10 @@ class UserViewModel() : ViewModel() {
                     _user.value = existingUser.copy(
                         id = document.id,
                         establishmentUsed = updatedEstablishments
-                    )
+                    )*/
 
                 } else {
-                    val newUser = user.copy(establishmentUsed = listOf(establishmentRef.id))
+                    val newUser = user.copy(establishmentUsed = establishmentRef.id)
                     val newUserRef = db.collection("users").add(newUser).await()
 
                     _user.value = newUser.copy(id = newUserRef.id)

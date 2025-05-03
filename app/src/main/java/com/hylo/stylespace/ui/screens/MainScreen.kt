@@ -53,10 +53,13 @@ import com.hylo.stylespace.model.NavigationItem
 import com.hylo.stylespace.model.TypeServices
 import com.hylo.stylespace.model.UserRole
 import com.hylo.stylespace.model.enums.Screen
+import com.hylo.stylespace.ui.screens.createAppointment.CreateAppointmentScreen
 import com.hylo.stylespace.viewmodel.AppointmentViewModel
+import com.hylo.stylespace.viewmodel.EstablishmentViewModel
 import com.hylo.stylespace.viewmodel.ServicesViewModel
 import com.hylo.stylespace.viewmodel.UserViewModel
 import com.hylo.stylespace.viewmodel.factory.AppointmentViewModelFactory
+import com.hylo.stylespace.viewmodel.factory.EstablishmentViewModelFactory
 import com.hylo.stylespace.viewmodel.factory.ServicesViewModelFactory
 
 
@@ -83,13 +86,19 @@ fun MainScreen(
 
     val appointmentViewModel: AppointmentViewModel = viewModel(
         factory = AppointmentViewModelFactory(
-            establishmentId = user?.establishmentUsed?.firstOrNull().toString(),
+            establishmentId = user?.establishmentUsed.toString(),
             userId = user?.id ?: ""
         )
     )
 
     val servicesViewModel: ServicesViewModel = viewModel(
-        factory = ServicesViewModelFactory(user?.establishmentUsed?.firstOrNull().toString())
+        factory = ServicesViewModelFactory(user?.establishmentUsed.toString())
+    )
+
+    val establishmentViewModel: EstablishmentViewModel = viewModel(
+        factory = EstablishmentViewModelFactory(
+            establishmentId = user?.establishmentUsed.toString()
+        )
     )
 
     val navigationItems by remember {
@@ -269,7 +278,8 @@ fun MainScreen(
                         CreateAppointmentScreen(
                             mainScreenNavController = navController,
                             servicesViewModel = servicesViewModel,
-                            typeServiceSelected = it
+                            typeServiceSelected = it,
+                            establishmentViewModel = establishmentViewModel
                         )
                     }
 

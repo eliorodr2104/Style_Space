@@ -48,6 +48,7 @@ class ServicesViewModel(
         withContext(Dispatchers.IO) {
 
             try {
+
                 val db = getDatabaseReference()
 
                 val typeServicesQuery = db
@@ -58,9 +59,11 @@ class ServicesViewModel(
                 val typeServicesQuerySnapshot = typeServicesQuery.get().await()
 
                 if (!typeServicesQuerySnapshot.isEmpty) {
+
                     _typeServices.value = typeServicesQuerySnapshot.toObjects(TypeServices::class.java)
 
                 } else {
+
                     _typeServices.value = emptyList()
                 }
 

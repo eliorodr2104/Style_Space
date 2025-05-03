@@ -49,24 +49,49 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hylo.stylespace.googleAuth.GoogleAuthUiClient
 import com.hylo.stylespace.R
+import com.hylo.stylespace.googleAuth.GoogleAuthUiClient
 import com.hylo.stylespace.model.Establishment
 import com.hylo.stylespace.model.SignIn.SignInState
 import com.hylo.stylespace.model.User
+import com.hylo.stylespace.ui.theme.StyleSpaceTheme
 import com.hylo.stylespace.viewmodel.UserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * Function to manage the sign in screen
+ *
+ * This composable function:
+ * - Create a first login with One Tap Google [GoogleFirstLogin]
+ * - Complete the user information [FormRegister]
+ *
+ * Navigation includes:
+ * - "sign_in_google": One tap Google sign in
+ * - "complete_register": Form for the user to fill out
+ *
+ * @param userViewModel : View model for management user information
+ * @param googleAuthUiClient : Management auth flow
+ * @param navController : Main [NavController] for auth && home flow
+ * @param state : current sign in state
+ * @param onSignInClick : function to sign in the user
+ *
+ * @author Eliorodr2104
+ */
 @Composable
 fun SignInScreen(
     userViewModel: UserViewModel,
-    establishmentLocalInformation: Establishment,
     googleAuthUiClient: GoogleAuthUiClient,
     navController: NavController,
     state: SignInState,
     onSignInClick: () -> Unit
 ) {
+    // Create the establishment
+    val establishmentLocalInformation = Establishment(
+        name = stringResource(R.string.app_name),
+        address = "Via Madonna, 87",
+    )
+
     var isSignInProcess by remember {
         mutableStateOf(false)
     }
@@ -263,9 +288,7 @@ private fun FormRegister(
                                 email = user?.email ?: "",
                                 phone = phoneText,
                                 type = "client",
-                                establishmentUsed = listOf(
-                                    establishmentLocalInformation.id
-                                )
+                                establishmentUsed = establishmentLocalInformation.id
                             ),
 
                             establishment = establishmentLocalInformation
